@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[Spring注解]]></title>
+    <url>%2F2017%2F08%2F11%2FSpring%E6%B3%A8%E8%A7%A3%2F</url>
+    <content type="text"><![CDATA[###注解介绍注解有两个作用：标注和注入 标注：类路径下自动扫描，减少在xml中配置bean,例如@Component,@Service 注入：自动装配，需要类的地方直接加注解就可以引入该类；例如:@Autowired 在spring中开启注解：\指定扫描路径 spring生成的注解有默认名字，为类名的首字母小写形式，如果要指定自定义的需要类似@Service(“xxx”)来指定 Spring中的bean，默认是singleton，即生成的对象是全局单例的，如果要改，需要@scope(“prototype”)指明，scope可以选择：singleton、prototype、request、session、global session； 可以用ApplicationContext.getBean(“zoo”)，来获取Zoo.java类 ###常见注解分类Spring中有如下几种分类： Spring原生：Required、Autowired、value、Qualifier、Component及其扩展的Repository、Service、Controller JSR-250:Resource、PostConstruct、Predestroy JSR-330:inject、Named、Qualifier JPA注解:PersistentContext、PersistenceUnit Springmvc注解：RequstBody、RequastParam、ResponseBody,ResponseParam,Pathvariable,ModelAttribute; springBoot注解：SpringBootApplication ###常用注解 Component:标注组件，与持久层的Repository、业务层的Service、控制层的Controller功能一样，加上注解可以让Spring找到相应的类，在对组件不好分类的时候，用Component注解来标识； Autowired:是Spring的注解，自动注入类，需要Spring去配置文件中找(或者上下文找标注过的类)相应的Bean，如果找不到会报错，可以用@Autowired(required=false)来设置找不到不报错，返回null Resource:与Autowired功能相似，默认通过name来匹配，是J2EE的注解，可以指定按照type来匹配@Resource(type=xxx.class) ###Springmvc注解 ResponseBody:使用在方法上，返回json格式的数据，直接输入到Http response body中； RequestBody:使用在参数前，标注对象，Spring完成对象-协议之间的转化，解析post data body,然后绑定到相应的bean上；支持application/json或者application/xml协议格式；与ResponseBody一样，是由HandlerAdapter配置的HttpMessageConverter在对象和协议之间转化的； RequstParam:获取参数，对于简单类型的绑定，对应的content-type为application/x-www-form-urlencoded,即form表单提交的数据; PathVariable:接收路径参数5.RestController:是Controller和Response两个注解的组合； ModelAttribute:渲染model，model可以看做是一个map,改注解的作用是用来传递和保存数据，可以使用在方法上和参数上； 使用在方法上，则这个方法在@RequestMapping方法调用之前，在model中填充属性，例如填充下拉列表，用来在request的model里put(“小写开头的类名”,类名)，该model就是标注方法的返回值； 使用在参数上，数据绑定，将相应名称的值绑定到注解的参数bean上，绑定源查找顺序：SessionAttribute注解、ModelAttribute注解、new一个新的实例； HttpEntity，除了能获得request和response之外，能访问请求和响应头，使用getHeaders和getBody() ###参考 Spring常用注解标签详解Spring常用注解汇总]]></content>
+      <categories>
+        <category>javaweb</category>
+      </categories>
+      <tags>
+        <tag>javaweb</tag>
+        <tag>Spring</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[mysql]]></title>
+    <url>%2F2017%2F07%2F26%2Fmysql%2F</url>
+    <content type="text"></content>
+      <tags>
+        <tag>javaweb</tag>
+        <tag>mysql</tag>
+        <tag>数据库</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[常用json库]]></title>
+    <url>%2F2017%2F07%2F26%2Fjson%2F</url>
+    <content type="text"><![CDATA[json是一种轻量级的数据交换格式，基于两种数据结构：Object(name/value pair),Array(list);json具有平台无关性，完全独立于语言/系统的文本格式；相比于xml比较轻量级，易于机器解析和生成；可以进行压缩； 常用的json库 Jackson：Spring默认的json序列化工具，开源；https://github.com/FasterXML/jackson Gson：内部反射类型进行序列化，Google出品：https://github.com/google/gson Fastjson：接口友好，阿里巴巴出品，速度比较快，:https://github.com/alibaba/fastjson 注意事项 fastjson和Gson默认情况下不会将null变量写到json中,jackson会将不存在的字段设置为null；需要支持null:java对象转换json的细节处理 jackson反序列化为对象时，改对象所属的类必须有无参构造函数; jackson的驼峰命名，当第一个变量用大写字母，例如BFlag，在序列化会变成bflag,全部转换成小写; 非public的属性变量不会进行序列化和反序列化，除非有getter、setter方法(Gson除外); jackson中@JsonProperty注解，可以解析非public的属性 jackson静态变量不序列化 Gson使用注意事项 序列化和反序列化序列化过程是指将java对象转化成json串，反序列化是指将json串转化成java对象； 123456789101112131415161718192021//假设对一个User bean进行序列化和反序列化//jackson,主要使用ObjectMapper类ObjectMapper objectMapper = new ObjectMapper(); // 将Java对象序列化为Json字符串 String objectToJson = objectMapper.writeValueAsString(initUser()); // 将Json字符串反序列化为Java对象 User user = objectMapper.readValue(objectToJson, User.class); //fastjson,主要的类是JSON// 将Java对象序列化为Json字符串 String objectToJson = JSON.toJSONString(initUser()); // 将Json字符串反序列化为Java对象 User user = JSON.parseObject(objectToJson, User.class); //gson,主要使用Gson类，用GsonBuilder构造Gson gson = new GsonBuilder().create(); // 将Java对象序列化为Json字符串 String objectToJson = gson.toJson(initUser()); // 将Json字符串反序列化为Java对象 User user = gson.fromJson(objectToJson, User.class); jackson反序列化数组示例: 1234567String json = "[&#123;\"id\":\"12345\"&#125;,&#123;\"id\":\"777\"&#125;]";//方法一List&lt;MessagesModel&gt; model = mapper.readValue(json, TypeFactory.defaultInstance().constructCollectionType(List.class,MessagesModel.class));//方法二List&lt;MessagesModel&gt; model = mapper.readValue(json,new TypeReference&lt;List&lt;MessagesModel&gt;&gt;()&#123;&#125;);//方法三List&lt;MessagesModel&gt; model = Arrays.asList(mapper.readValue(json,MessagesModel[].class)); fastJson快捷使用 12345import com.alibaba.fastjson.JSONObject;JSONObject jsonObject = new JSONObject();jsonObject.put("Id",1111);jsonObject.put("name","hello");... JSONPjson用来传输数据，jsonp用来解决ajax请求跨域问题；client传递一个callback参数(参数名可以自定义)给Server，Server返回数据时会将这个callback参数作为函数名来包裹住JSON数据原理介绍和实现例子]]></content>
+      <categories>
+        <category>javaweb</category>
+      </categories>
+      <tags>
+        <tag>javaweb</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[http理解]]></title>
+    <url>%2F2017%2F07%2F26%2Fhttp%2F</url>
+    <content type="text"><![CDATA[http报文包括：request报文和response报文；每个request和respose构成一次事务；每个报文由三部分构成：起始行start line，首部header和主体data body。 常见请求类型 get:获得/查询某个资源，应该是安全和幂等的； head：获取报文head，与get方法一样，但是不返回报文主体，通常用于确认url的有效性或者确认资源更新的日期时间； post：向服务器传输数据，通常用来支持html的表单； put：写入文档，类似于insert； delete：删除资源 options：询问支持的方法 返回类型 1XX: 信息状态码，很少用到； 2XX: 成功 3XX: 重定向状态码，资源被移动，一般附带Location首部，告知request新的位置； 301 Move Permanently永久性重定向 302 Found临时性重定向 304 not Modified资源没有修改，client可以在cache中获取； 4XX: 客户端错误状态码 400 bad Request报文语法错误 403 Forbidden访问被服务器拒绝 404 Not Found 5XX: 服务器本身发生错误 500 Internal Server Error 502 Bad Gateway 服务器遇到了上游的无效响应 503 Service Univailable 服务器暂时无法处理请求 curl命令 curl处理get请求curl “http://www.baidu.com“ 如果这里的URL指向的是一个文件或者一幅图都可以直接下载到本地 curl -i “http://www.baidu.com“ 显示全部信息 curl -l “http://www.baidu.com“ 只显示头部信息 curl -v “http://www.baidu.com“ 显示get请求全过程解析 wget “http://www.baidu.com&quot;也可以 curl -d “param1=value1&amp;param2=value2” “http://www.baidu.com“ curl处理post请求 curl -o mygettext.html http://www.gnu.org/software/gettext/manual/gettext.html 将文件下载到本地并命名为mygettext.html curl -O http://www.gnu.org/software/gettext/manual/gettext.html 将文件保存到本地并命名为gettext.html curl -D sugarcookies http://localhost/sugarcrm/index.php 将网站的cookies信息保存到sugarcookies文件中 curl -b sugarcookies http://localhost/sugarcrm/index.php 使用上次保存的cookie信息 curl提供了一个简单的方法来完全控制传出HTTP请求的HTTP头。你需要的这个参数是“-H” 或者 “–header”。 Cookie&amp;Sessioncookie和session都是用来解决http无状态的问题，可以记录用户的状态和个性化信息，实现持久化会话。cookie存在client端，session存在服务端；session会消耗server内存，不支持分布式，一般使用cookie； cookie属性 String name;//cookie的名字，同一域下必须唯一 String value;//cookie的值，敏感信息不能穿明文 String domain;//cookie的作用域，不能跨域 int maxAge = -1;//默认有效期，只存在本次会话 String path;//作用的context，包括当前context以及其子context boolean secure;//是否安全传输，如果为true的话，则只有在https时才发送cookie 持久连接http事务结束之后，不会直接将其关闭，因为每次简历连接和启动连接时候都比较耗时，所以会keep-alive； tcp slow start：tcp在启动时，会限制连接的最大速度，数据传输成功后随着时间而提高传输速度； Keep-alive：在http事务结束后任然保持tcp连接打开状态，为后续事务重复利用，直到client和server关闭；keep-alive随request一起发送，如果某一次request没有带，服务器会在response之后关闭连接，response的keep-alive有两个参数：可保持最大连接数max和可保持最大时长timeout； 代理Proxy: 位于client和cerver之间，对request和respose进行转发、包装或修改，例如nginx 哑代理问题： 代理对请求直接转发，不进行处理，导致客户端传递的Proxy-connection无法被服务器端识别，从而服务器在返回信息时不带connection:keep-alive的头部；而崇明的代理会在代理层做解析，把Proxy-connection转化成服务器可以识别的connection:keep-alive；详细过程可以参考用暴走漫画理解HTTP-探探持久连接]]></content>
+      <tags>
+        <tag>javaweb</tag>
+        <tag>网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[maven]]></title>
+    <url>%2F2017%2F07%2F26%2Fmaven%2F</url>
+    <content type="text"><![CDATA[maven是一个项目管理和综合工具，在多个开发团队合作时，maven可以设置按标准在非常短的时间内完成配置工作。 生命周期maven有三套生命周期：clean lifecycle, default lifecycle,site lifecycle； clean lifecycle: pre-clean -&gt; clean -&gt; post-clean default lifecycle:pre-resource -&gt; compile -&gt; test-compile -&gt; test -&gt; package -&gt; install -&gt; deploy site lifecycle:pre-site -&gt; site -&gt; post-site -&gt; site-deploy 注：执行生命周期中某一阶段，会默认执行其之前的所有阶段 常用命令 编译项目：mvn compile 编译测试代码：mvn test-compile 单元测试：mvn test 构建项目：mvn package 清理项目：mvn clean 将项目安装到maven本地资源库: mvn install 生成基于maven的项目文档站点：mvn site 部署远程仓库：mvn deploy 部署基于maven的war文件到tomcat: mvn tomcat:deploy 查看父pom：mvn help:effective-pom 查看依赖树：mvn dependency:tree 本地打包过滤掉test：mvn clean package -Pdev -Dmaven.test.skip=true resources本地仓库：用来存储项目的依赖库，默认文件夹是.m2目录中央仓库：用来下载所有项目依赖库的默认位置私服：公司仓库Nexus pom文件一些标签： finalname：定义项目打包名称 profile：配置响应的环境，dev，betamagic，prod dependency元素： type：依赖类型，默认为jar，对应构建定义的packaging scope：依赖范围（见下一节） optional：依赖是否可选 exclusions：排除依赖传递 依赖归类在propertie标签内声明常量，在版本处使用该常量；只要groupid和version一样就可以归类例子： 123456789&lt;properties&gt; &lt;org.Springframework.version&gt;3.1.4.release&lt;/org.Springframework.version&gt;&lt;/properties&gt;...&lt;dependency&gt; ... &lt;version&gt;$&#123;org.Springframework.version&#125;&lt;/version&gt; ... 聚合使用一个命令同时构建多个模块父工程执行mvn package可以打包其自己及其所有子工程，在父工程中，将定义为pom，将子模块放入到modules中； 继承 父pom包含dependdencymanagement，子pom用dependency即可，可以不指定版本号； 子pom中，groupId和version可以直接继承父pom，不需要指定，artifactId必须与父pom不一样 依赖冲突重复类：在不同的jar包里，有一样类名的类。 1234567891011121314每次提交代码时，要检查重复类,执行命令mvn enforcer:enforcemvn dependency:tree --Dverbosemvn dependency:tree -Dverbose | grep "omitted for conflict with"发现重复后，在pom.xml文件中添加exclusion删除重复的类。 &lt;exclusions&gt; &lt;exclusion&gt; &lt;groupId&gt;要删掉的groupid&lt;/groupId&gt; &lt;artifactId&gt;要删除的类名&lt;/artifactId&gt; &lt;/exclusion&gt;&lt;/exclusions&gt; 如果两个包都依赖另外一个包，另外这个包得版本不一样，就近原则。 默认执行规则： A-&gt;C 1.0(used) 就近原则B-&gt;C2.0A-&gt;B-&gt;C 1.0D-&gt;C 2.0(used) 层少原则如果固定要一个版本，可以在dependencymanagement指定: 12345&lt;dependency&gt; &lt;groupId&gt;org.jboss.netty&lt;/groupId&gt; &lt;artifactId&gt;netty&lt;/artifactId&gt; &lt;version&gt;3.2.1.Final&lt;/version&gt;&lt;/dependency&gt; scope依赖范围scope是dependency的子标签，规定包得作用域 compile: 默认，写代码时可以用，打包之后会被放在lib的目录 provide: 与compile相似，可以在代码中直接引用，但是不会在lib目录下生成。实现在容器里(tomcat)。 runtime:运行时才能使用包，在写代码是不能使用的。例如：slf4j、log4j、commons-log、logback等打log的包和mysql的dirver类。可以直接修改pom文件，实现接口api编程. test:只有在测试的时候可以引入 @TEST maven测试在java目录下，需要测试的类中，快捷键ctrl+shift+t，选择junit4和要测试的方法，可以自动生成测试类及其方法，自己实例化类，调用对象方法验证；如果需要加载资源，需要在测试类中添加： 1234567@Service@Runwith(Spring.Junit4ClassRunner.class)@contextconfiguration(location=&#123;"classpath:Spring/加载文件名"&#125;);//同时，在方法中，使用@Resource实例化对象，不用new@Resurceprivate 要测的class 对象；对象.func();]]></content>
+      <categories>
+        <category>javaweb</category>
+      </categories>
+      <tags>
+        <tag>javaweb</tag>
+        <tag>java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[LSHForest判断文档相似度]]></title>
+    <url>%2F2017%2F07%2F25%2FLSHForest%2F</url>
+    <content type="text"><![CDATA[LSH Forest: Locality Sensitive Hashing forest,局部敏感哈希森林， 是最近邻搜索方法的代替，排序实现二进制搜索和32位定长数组和散列，使用hash家族的随机投影方法近似余弦距离。随机投影树，对所有的数据进行划分，将每次搜索与计算的点的数目减小到一个可接受的范围，然后建立多个随机投影树构成随机投影森林，将森林的综合结果作为最终的结果。 随机投影树的构建方法 1.随机选取一个从原点出发的向量，与这个向量垂直的直线将平面内的点划分为了两部分，将属于这两部分的点分别划分给左子树和右子树。在数学计算上，是通过计算各个点与垂直向量的点积完成这一步骤的，点积大于零的点划分到左子树，点积小于零的点划分到右子树。 2.再次随机选取一个向量，与该向量垂直的直线将所有点进行了划分。 3.以此类推继续划分下去，直到每个叶节点中点的数目都达到一个足够小的数目。注意这棵树并不是完全树。 4.新的点最近邻计算时，首先通过计算该点与每次划分所用向量的点积，来找到其所属于的叶节点，然后利用这个叶节点内的​​这些点进行最近邻算法的计算。这个过程是一棵随机投影树的计算过程，利用同样的方法，建立多个随机投影树构成随机森林，将森林的总和结果作为最终的结果。 具体实现sklearn.neighbors中的LSHForest，我写的用LSHForest进行文档相似计算例子例子使用搜狗语料库进行实现，使用os.walk遍历文件夹。具体过程： 1.读取预料库 2.分词工具对语料库进行分词和停用词过滤 3.使用TfidfVectorizer 计算tdidf向量,构造训练数据和测试数据 4.使用LSHForest训练数据123lshf = LSHForest(random_state=42) #LSHForest训练数据lshf.fit(x_train.toarray())distances, indices = lshf.kneighbors(x_test.toarray(), n_neighbors=5) 参考 Gensim做中文主题模型（LDA) 随机投影森林-一种近似最近邻方法（ANN 用docsim/doc2vec/LSH比较两个文档之间的相似度 文献：Bawa M, Condie T, Ganesan P. LSH forest: self-tuning indexes for similarity search[C]// International Conference on World Wide Web, WWW 2005, Chiba, Japan, May. 2005:651-660.]]></content>
+      <categories>
+        <category>文档相似度</category>
+      </categories>
+      <tags>
+        <tag>分类</tag>
+        <tag>自然语言处理</tag>
+        <tag>文档相似度</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[gensim similarity计算文档相似度]]></title>
+    <url>%2F2017%2F07%2F25%2Fgensim%2F</url>
+    <content type="text"><![CDATA[使用gensim包的models,corpora,similarities，对文档进行相似度计算，结果比较其他lda、doc2vec方法稳定。 主要步骤 1.建立语料库，os.walk方法遍历文件夹中的文件 2.使用分词工具(jieba)进行分词、停用词过滤 3.使用corpora.Dictionary()生成字典，该方法把所有单词取一个set，并对set中每一个单词分配一个id号的map 4.dictionary.doc2bow()方法把文档用稀疏向量表示。 5.similarities.Similarity()方法计算相似度 6.构造训练数据和测试数据 7.similarity[test_corpus]返回相似度最高的similarity.num_best 个文档。具体参考示例：git地址 更多参考 Gensim做中文主题模型(LDA) 用docsim/doc2vec/LSH比较两个文档之间的相似度 gensim使用方法以及例子 参考文献向量空间模型计算文档集合相似性。[0]将原始输入的词转换为id，词的id表示法简单易用，但是无法预测未登记词，难以挖掘词关系；词汇鸿沟[1]:任意两个词之间是独立的，无法通过词的ID来判断词语之间的关系，无法通过词的id判断词语之间的关系[2] 文献： [0]基于向量空间模型的中文文本相似度算法研究 [1]word representations: a simple and general method for semi-supervised learning. [2]基于词向量模型特征空间优化同义词扩展研究和应用]]></content>
+      <categories>
+        <category>文档相似度</category>
+      </categories>
+      <tags>
+        <tag>自然语言处理</tag>
+        <tag>文档相似度</tag>
+        <tag>gensim</tag>
+        <tag>similarity</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[doc2vec计算文档相似度]]></title>
+    <url>%2F2017%2F07%2F25%2Fdoc2vec%2F</url>
+    <content type="text"><![CDATA[doc2vec是基于word2vec的，word2vec对于计算两个词语的相似度效率比较好，修改了word2vec中的cbow和skip-gram模型，paragraph vector直接得到doc向量。 使用过程 1.读取文件，os.walk()遍历文件夹 2.构建语料库，分词，过滤停用词。用gensim.models.doc2vec.TaggedDocument() 为文档打tag 3.创建model 123model = Doc2Vec(size=50, min_count=1, iter=10)model.build_vocab(corpora_documents)model.train(corpora_documents) 4.计算相似度 123inferred_vector = model.infer_vector(test_cut_raw_1)sims = model.docvecs.most_similar([inferred_vector], topn=3)print sims git参考例子 参考： 情感分析利器——Doc2vec 基于gensim的Doc2Vec简析 参考文献：GloVe: Global Vectors for Word Representation]]></content>
+      <categories>
+        <category>文档相似度</category>
+      </categories>
+      <tags>
+        <tag>自然语言处理</tag>
+        <tag>文档相似度</tag>
+        <tag>doc2vec</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[幂等]]></title>
+    <url>%2F2017%2F07%2F24%2F%E5%B9%82%E7%AD%89%2F</url>
+    <content type="text"><![CDATA[apache camel IdempotentApache camel基于规则路由和处理的引擎，提供企业集成的java对象的实现，通过应用程序接口或DSL(domain-specific languages)来配置路由和处理规则，从一个from源头得到数据，通过process处理，再发到一个to目的地； CamelContext RouteBuilder configure(){from().process(Processor).to();} from to 称为endPoint控制端点 Tools for Apache Camel”可以图形化Apache Camel的规则编排过程。 Enterprise Integration Patterns：企业集成模式 endpoint都是通过URI格式进行描述的 Exchange和MessageExchange，帮助开发人员在控制端点到处理器、处理器到处理器的路由过程中完成消息的统一描述，包含：ExchangeId, fromEndpoint, properties, pattern, Exception,Message:是Exchange中的属性，inMessage和outMessage，每一个message对象包含四个属性：MessageID、Header、Body和Attachment。 Processor处理器最主要的工作是进行业务数据格式的转化和中间数据的临时存储，Endpoint一般用来处理业务逻辑、建立数据库连接、建立RPC等； #####Camel路由规则 Service的start和stop方法控制服务的生命周期;CamelContext横跨了Camel服务的整个生命周期，并且为Camel服务的工作环境提供支撑。 参考 ： http://blog.csdn.net/yinwenjie/article/details/51818352 幂等支持camel使用IdempotentConsumer类 。根据某个消息ID，到RedisIdempotentRepository 仓储中寻找这个ID，如果存在表示被消费过，否则加入。Redis这里作为消息的存储。http://www.jdon.com/repository/camelredis.htmlhttp://coderec.cn/2016/05/12/Apache-Camel-%E8%B7%AF%E7%94%B1%E6%B6%88%E6%81%AF%E6%97%B6%E5%8E%BB%E9%87%8D/配置： 1234567891011&lt;bean id="idempotentRepository" class="org.apache.camel.component.redis.processor.idempotent.RedisIdempotentRepository"&gt;&lt;constructor-arg value="test-repo"/&gt;&lt;/bean&gt;&lt;route&gt;&lt;from uri="direct:start"/&gt;&lt;idempotentConsumer messageIdRepositoryRef="idempotentRepository"&gt;&lt;simple&gt;$&#123;in.body.id&#125;&lt;/simple&gt;&lt;to uri="mock:result"/&gt;&lt;/idempotentConsumer&gt;&lt;/route&gt;]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>redis</tag>
+        <tag>缓存</tag>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[缓存]]></title>
+    <url>%2F2017%2F07%2F24%2Fcache%2F</url>
+    <content type="text"><![CDATA[缓存设计缓存设计考虑点： 存储的数据结构 缓存容量大小 缓存有效期 容量不够时的清理策略 缓存设计相关指标(命中率、命中次数、miss率等) 缓存设计过程： 全局的hash表，Key-Value键值对 提供get/put等方法来操作缓存 规定最大容量 记录缓存访问时间，决定缓存是否失效 容量不够时LRU/FIFO/LFU来做清理 每次get方法做结果统计 guava cache类似于ConcurrentMap，支持高并发，是线程安全的，ConcurrentMap添加元素，不显式移除的话一直存在Map中，但是Cache会有失效策略，以及支持高并发. new Builder:cache构造器，builder模式 maximumSize:缓存最大容量 expireAfterAccess:缓存有效期 refreshAfterWrite:自动刷新缓存时间间隔 recordStats:记录缓存使用情况 CacheLoader:定义缓存刷新的方法例子： guava-chache示例123456789101112131415161718192021222324public static void test9() throws ExecutionException &#123; LoadingCache&lt;String,TestPojo&gt; loadingCache = CacheBuilder.newBuilder() .maximumSize(1000) .expireAfterAccess(30, TimeUnit.MINUTES) .refreshAfterWrite(10,TimeUnit.MINUTES) .removalListener(new RemovalListener&lt;String, TestPojo&gt;() &#123; public void onRemoval(RemovalNotification&lt;String, TestPojo&gt; removalNotification) &#123; //TODO &#125; &#125;) .recordStats() .build(new CacheLoader&lt;String, TestPojo&gt;() &#123; @Override public TestPojo load(String s) throws Exception &#123; return fetchFromDB(s); &#125; &#125;); loadingCache.get("aaa"); //get时，如果缓存中没有。则到数据库中查找 loadingCache.put("bbb",new TestPojo()); &#125; private static TestPojo fetchFromDB(String s) &#123; return new TestPojo(); &#125; 优点： 使用简单 线程安全，内部实现类似于ConcurrentHashMap 可以自动加载、定时更新缓存 容量不够时LRU清理 记录访问时间用于计算是否有效 key/value支持多种引用类型 溶剂缓存访问数据 缓存被移除或失效时可以被“监听” 考虑：数据量、数据变化 局限： 单个应用运行时的本地缓存，数据并没有持久化存放到某个文件或外部服务器； 单机，受机器内存限制，重启应用缓存数据会丢失。应用分布式部署会出现缓存数据不一致。 redis原理： KV Nosql 缓存在内存 支持多种数据结构：string,hash,list,set,zset 可持久化：AOF(日志) vs RDB（快照） 高性能、高可靠 支持主从复制 支持事务 redis安装安装参考启动：服务器端：src/redis-server客户端：src/redis-cli 常用命令：set ccc cccget ccclpush ccclist list1lpush ccclist list2lrange ccclist 0 -1常用命令参考]]></content>
+      <categories>
+        <category>架构</category>
+      </categories>
+      <tags>
+        <tag>cache</tag>
+        <tag>guava</tag>
+        <tag>redis</tag>
+        <tag>缓存</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[git 入门]]></title>
+    <url>%2F2017%2F07%2F23%2Fgit%2F</url>
+    <content type="text"><![CDATA[基本命令git常用命令和流程： 拉代码：git clone 地址 查状态：git status 看分支：git branch 创建分支：git checkout –b 分支号 看分支：git branch 查看这次修改: git diff 具体流程 查看当前修改状态：git status 暂存修改代码：git stash 拉远程仓库：git fetch origin master、git rebase –保证代码最新的 取出暂存代码：git stash pop -解决冲突 查看修改:git status 添加文件：git add “文件名/文件夹” 提交到本地代码库:git commit –m “备注” 合并:git merge master 提交:git push —upstream origin 分支号 第一次提交时：git push origin 分支号 git log可以查看版本号 从master拉取代码在自己分支：git checkout -b 分支号 –track origin/分支号 git回滚 先用git log查看要回滚的commit id git代码库回滚: 指的是将代码库某分支退回到以前的某个commit id 【本地代码库回滚】：git reset –hard commit-id :回滚到commit-id，将commit-id之后提交的commit都去除git reset –hard HEAD~3：将最近3次的提交回滚 【远程代码库回滚】：应用场景：自动部署系统发布后发现问题，需要回滚到某一个commit，再重新发布原理：先将本地分支退回到某个commit，删除远程分支，再重新push本地分支 操作步骤： 1、git checkout the_branch 2、git pull 3、git branch the_branch_backup //备份一下这个分支当前的情况 4、git reset –hard the_commit_id //把the_branch本地回滚 the_commit_id 5、git push origin :the_branch //删除远程 the_branch 6、git push origin the_branch //用回滚后的本地分支重新建立远程分支 7、git push origin :the_branch_backup //如果前面都成功了，删除这个备份分支 git修改分支名1.查看远程分支：git branch -a2.clone分支：git clone -b 分支名3.删除远程分支：git push origin –delete 分支名4.修改本地分支名：git branch -m 旧分支名 新分支名5.git push origin 新分支名 暂存修改流程 git fetch git stash git rebase origin/master get stash pop 如果冲突 git diff看哪里冲突了，并到相应文件解决冲突 git add &lt;冲突的文件&gt; git rebase –continue git fetch git stash git rebase origin/master get stash pop 如果冲突 git diff看哪里冲突了，并到相应文件解决冲突 git add &lt;冲突的文件&gt; git rebase –continue 一些技巧： git commit -am “注释”：这个命令结合了git add 和git commit -m命令 如果还没创建分支就修改了代码，需要重新建分支，但是又不想再改一遍，需要git stash，将修改先暂存起来，然后创建新的分支，切换到新分支之后再git pop，修改就会在当前新分支中自动添加了；]]></content>
+      <categories>
+        <category>javaweb</category>
+      </categories>
+      <tags>
+        <tag>javaweb</tag>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[javaweb学习路径规划]]></title>
+    <url>%2F2017%2F07%2F22%2Fjavaweb%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92%2F</url>
+    <content type="text"><![CDATA[总结一下入门javaweb需要的基本知识点: git 常用命令 冲突解决 版本回退 java&amp;guava 常见容器 java8流 maven 父子pom profile scope 生命周期 依赖冲突 插件 占位符； linux 常见命令(文件grep，wc,查找，权限、压缩、scp) crontab 进程 awk crul 系统性能方面: free、zostat、vmstat mysql 基本语句 索引 JDBC:过程 安全性sql注入 连接池 JNDI 事务锁 存储引擎 myisam，innodb http Http header cookie session servlet filter lisener tomcat 转发重定向 json Json序列化和反序列化 spring aop ioc mvc boot 注解 mybatis 配置 mapper 动态sql 注解 demo 安全问题 xss ssrf csrf 进阶性能问题 nginx RPC-thrift MQ-kafka 多线程 缓存redis]]></content>
+      <categories>
+        <category>javaweb</category>
+      </categories>
+      <tags>
+        <tag>javaweb</tag>
+      </tags>
+  </entry>
+</search>
